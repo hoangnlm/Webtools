@@ -7,17 +7,46 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
 import model.User;
 
 /**
  * DAO Model
+ *
  * @created on Dec 23, 2016, 9:58:17 PM
  * @author HoangNLM
  */
-public class UserDao {
+@Named
+@RequestScoped
+public class UserDaoImpl implements IDao<User>{
 
     private DbConnect db = new DbConnect();
 
+    public User getById(int id) {
+        String sql = "select * from user where id=?";
+        try (
+                Connection con = db.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql);) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setFullname(rs.getString("fullname"));
+                user.setLevel(rs.getInt("level"));
+                user.setImage(rs.getString("image"));
+                return user;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(DbConnect.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    @Override
     public List<User> get() {
         List<User> list = new ArrayList<>();
         String sql = "select * from user";
@@ -31,6 +60,7 @@ public class UserDao {
                 user.setPassword(rs.getString("password"));
                 user.setFullname(rs.getString("fullname"));
                 user.setLevel(rs.getInt("level"));
+                user.setImage(rs.getString("image"));
                 list.add(user);
             }
         } catch (Exception ex) {
@@ -39,6 +69,7 @@ public class UserDao {
         return list;
     }
 
+    @Override
     public long insert(User model) {
         String sql = "insert into user(username,password,fullname,level) values(?,?,?,?)";
         try (
@@ -57,6 +88,7 @@ public class UserDao {
         return -1;
     }
 
+    @Override
     public boolean update(User model) {
         String sql = "update user set username=?,password=?,fullname=?,level=? where id=?";
         try (
@@ -75,6 +107,7 @@ public class UserDao {
         return false;
     }
 
+    @Override
     public boolean delete(User model) {
         String sql = "delete from user where id=?";
         try (
