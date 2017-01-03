@@ -8,19 +8,6 @@
     padding-left: 10px;
 }
 
-.text-align-left{
-    text-align: left!important;
-}
-.text-align-right{
-    text-align: right!important;
-}
-.text-align-center{
-    text-align: center!important;
-}
-.text-align-justify{
-    text-align: justify!important;
-}
-
 .w50{
     width: 50px;
     text-align: left;
